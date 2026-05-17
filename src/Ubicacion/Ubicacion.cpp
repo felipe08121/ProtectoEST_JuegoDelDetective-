@@ -95,7 +95,7 @@ void Ubicacion:: setDerecha( Ubicacion * u ) {
 //Metodos Auxiliares:
 
 char Ubicacion:: getSimbolo() const {
-    switch ( tipo ) {
+    switch ( this->tipo ) {
         case TipoUbicacion:: EDIFICIO:
             return '#';
 
