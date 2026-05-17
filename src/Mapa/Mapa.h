@@ -18,12 +18,15 @@
 #include "../Testigo/Testigo.h"
 
 using std:: cout;
+using std:: endl;
 using std:: list;
 using std:: pair;
 using std::uniform_int_distribution;
 using std:: vector;
 using std:: mt19937;
 using std:: random_device;
+using std:: shuffle;
+using std:: min;
 
 
 class Mapa {
@@ -33,7 +36,7 @@ public:
     static const int TOTAL_FILAS = 11;
     static const int TOTAL_COLUMNAS = 11;
     static const int INTERIOR_MIN = 1; //Indice interior minimo.
-    static const int INTERIOR_MAX = 1; //Indice interior maximo.
+    static const int INTERIOR_MAX = 9; //Indice interior maximo.
     static const int NUM_CALLEJONES = 16;
     static const int NUM_PISTAS = 10;
     static const int NUM_TESTIGOS = 5;
@@ -82,14 +85,16 @@ public:
     void resetVisibilidad(); //Cubre todo con 'o'.
     int eliminarCallejonesAleatorios( int n );
 
+    bool hayPistaEn( int fila, int columna ) const;
+    bool hayTestigoEn( int fila, int columna ) const;
+
     //Display:
     void mostrar( int detFila, int detCol ) const;
 
-    const list<Pista*>& getPista() const;
+    const list<Pista*>& getPistas() const;
     const list<Testigo*>& getTestigos() const;
 
 };
-
 
 
 #endif //PROTECTOEST_JUEGODELDETECTIVE__MAPA_H
