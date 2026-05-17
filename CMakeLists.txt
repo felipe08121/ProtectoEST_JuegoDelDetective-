@@ -3,4 +3,6 @@ project(ProtectoEST_JuegoDelDetective_)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(ProtectoEST_JuegoDelDetective_ main.cpp)
+add_executable(ProtectoEST_JuegoDelDetective_ src/main.cpp
+        src/Ubicacion.cpp
+        src/Ubicacion.h)
