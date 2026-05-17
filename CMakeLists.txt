@@ -7,4 +7,6 @@ add_executable(ProtectoEST_JuegoDelDetective_ src/main.cpp
         src/Ubicacion/Ubicacion.cpp
         src/Ubicacion/Ubicacion.h
         src/Pista/Pista.cpp
-        src/Pista/Pista.h)
+        src/Pista/Pista.h
+        src/Testigo/Testigo.cpp
+        src/Testigo/Testigo.h)
