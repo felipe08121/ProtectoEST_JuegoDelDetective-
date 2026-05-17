@@ -1,0 +1,13 @@
+//
+// Created by felip on 17/05/2026.
+//
+
+#ifndef PROTECTOEST_JUEGODELDETECTIVE__PISTA_H
+#define PROTECTOEST_JUEGODELDETECTIVE__PISTA_H
+
+
+class Pista {
+};
+
+
+#endif //PROTECTOEST_JUEGODELDETECTIVE__PISTA_H

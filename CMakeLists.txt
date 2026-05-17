@@ -5,4 +5,6 @@ set(CMAKE_CXX_STANDARD 20)
 
 add_executable(ProtectoEST_JuegoDelDetective_ src/main.cpp
         src/Ubicacion/Ubicacion.cpp
-        src/Ubicacion/Ubicacion.h)
+        src/Ubicacion/Ubicacion.h
+        src/Pista/Pista.cpp
+        src/Pista/Pista.h)
