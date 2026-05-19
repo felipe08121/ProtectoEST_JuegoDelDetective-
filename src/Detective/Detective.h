@@ -1,10 +1,5 @@
-//
-// Created by felip on 17/05/2026.
-//
-
-#ifndef PROTECTOEST_JUEGODELDETECTIVE__DETECTIVE_H
-#define PROTECTOEST_JUEGODELDETECTIVE__DETECTIVE_H
-
+#ifndef PROYECTOESTRUCTURADATOS_DETECTIVE_H
+#define PROYECTOESTRUCTURADATOS_DETECTIVE_H
 
 #include <string>
 #include <stack> // TAD Pila - para las pistas recolectadas.
@@ -25,7 +20,7 @@ private:
     int fila;
     int columna;
     int puntaje;
-    stack<Pista*> pilaPistas; //TAD Pila: la ultima pila hallada es la primera en usarse.
+    stack<Pista*> pilaPistas; //TAD Pila: la ultima pista hallada es la primera en usarse.
 
 public:
     Detective( const string& nombre, int fila, int columna );
@@ -59,4 +54,4 @@ public:
 };
 
 
-#endif //PROTECTOEST_JUEGODELDETECTIVE__DETECTIVE_H
+#endif

@@ -1,7 +1,3 @@
-//
-// Created by felip on 17/05/2026.
-//
-
 #include "Detective.h"
 
 Detective :: Detective (const string& nombre, int fila, int columna ) {
@@ -97,7 +93,10 @@ void Detective::mostrarPilaPistas() const {
         copia.pop();
     }
 
-    cout << "  +--------------------------------+" << endl;
+    // Celdas vacias en la cima visual de la pila
+    cout << " ['#     #']" << endl;
+    cout << " ['#     #']" << endl;
+
     for ( int i = 0; i < (int)elems.size(); i++ ) {
         string etiqueta;
         if ( i == 0 ) {
@@ -109,10 +108,9 @@ void Detective::mostrarPilaPistas() const {
         else if ( i == 2 ) {
             etiqueta = " <- antepenultima";
         }
-        cout << " | [ " << elems[ i ]->getLetra() << " ] "
-             << elems[ i ]-> getTipoStr()
-             << etiqueta << endl;
+        cout << " ['#  " << elems[ i ]->getLetra()
+             << "  #']" << etiqueta << endl;
     }
-
-    cout <<  "  +--------------------------------+" << endl;
+    // Base de la pila
+    cout << " ['# # # #']" << endl;
 }

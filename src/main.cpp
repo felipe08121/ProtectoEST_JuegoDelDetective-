@@ -15,6 +15,7 @@ using std:: cin;
 using std:: getline;
 using std::numeric_limits;
 using std::streamsize;
+using std::uniform_int_distribution;
 
 //Generador aleatorio para efectos del main:
 static mt19937 mainRng( random_device{}() );
@@ -22,12 +23,8 @@ static mt19937 mainRng( random_device{}() );
 //Utilidades del interfaz de usuario:
 
 void limpiarPantalla() {
-#ifdef _WIN32
-    system("cls");
-#else
-    system("clear");
-#endif
-
+    cout << "\033[2J\033[H";
+    cout.flush();
 }
 
 void pausar() {
@@ -139,6 +136,7 @@ void mover( char cmd, Detective& detective, Mapa& mapa) {
 
     // Callejon: se revela borde, no se puede pasar:
     if ( destino->getTipo() == TipoUbicacion::CALLEJON ) {
+        destino->setDescubierto( true );
         cout << endl << "  [|] Callejon cerrado! Busca otra ruta (tienes pies)." << endl;
         pausar();
         return;
@@ -187,7 +185,7 @@ int main() {
   +------------------------------------------+
 )";
     string nombre;
-    cout << endl << " Tu nombre, detective (Recomiendo 'Holmes' o 'Sherlock' ";
+    cout << endl << " Tu nombre, detective (Recomiendo 'Holmes' o 'Sherlock'):  ";
     getline( cin, nombre );
     if ( nombre.empty() ) {
         nombre = "Anonimo";
@@ -273,7 +271,10 @@ int main() {
             //Todo fase 2: mostrar sospechosos, acusar, guardar en ABB.
             pausar();
             jugando = false;
+            cout << endl << " Siempre hay una sola verdad! Hasta la proxima, Dectective "
+                     << detective.getNombre() << endl;
         }
     }
+
     return 0;
 }

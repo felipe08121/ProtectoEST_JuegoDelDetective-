@@ -1,10 +1,5 @@
-//
-// Created by felip on 17/05/2026.
-//
-
-#ifndef PROTECTOEST_JUEGODELDETECTIVE__MAPA_H
-#define PROTECTOEST_JUEGODELDETECTIVE__MAPA_H
-
+#ifndef PROYECTOESTRUCTURADATOS_MAPA_H
+#define PROYECTOESTRUCTURADATOS_MAPA_H
 
 #include <list>
 #include <random>
@@ -85,9 +80,6 @@ public:
     void resetVisibilidad(); //Cubre todo con 'o'.
     int eliminarCallejonesAleatorios( int n );
 
-    bool hayPistaEn( int fila, int columna ) const;
-    bool hayTestigoEn( int fila, int columna ) const;
-
     //Display:
     void mostrar( int detFila, int detCol ) const;
 
@@ -97,4 +89,4 @@ public:
 };
 
 
-#endif //PROTECTOEST_JUEGODELDETECTIVE__MAPA_H
+#endif //PROYECTOESTRUCTURADATOS_MAPA_H
