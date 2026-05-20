@@ -25,7 +25,7 @@ void Juego:: iniciar() {
     mostrarBienvenida();
 
     string nombre;
-    cout << endl<<" Tu nombre, detective (Recomiendo 'Holmes' i 'Sherlock'):  " ;
+    cout << endl<<" Tu nombre, detective (Recomiendo 'Holmes' o 'Sherlock'):  " ;
     getline( cin, nombre);
 
     if ( nombre.empty() ) {
@@ -218,6 +218,27 @@ void Juego:: usarPista() {
             this->detective->setColumna( nc );
             this->mapa->marcarDescubierto( nf, nc );
             cout << " >> Prueba Forense: detective teletransportando." << endl;
+
+            //Verificar si la nueva posicion tiene pista o testigo (igual que en mover()):
+            Ubicacion * nuevaPos = this-> mapa->getNodoVecino( nf, nc, 'W' );//Truco para obetener el nodo
+            // Como no tenemos getNodo() publico, buscamos directo:
+            if ( this->mapa->hayPistaEn( nf, nc ) ) {
+                Pista * p = this->mapa->recogerPistaEn( nf ,nc );
+                if ( p ) {
+                    this->detective->agregarPista( p );
+                    cout << " >> Pista encontrada al llegar! Tipo: "
+                         << p->getTipoStr() << " [" << p->getLetra() << "]" << endl;
+                    revelarAtributoDelCulpable( "pista");
+                }
+            }
+            if (  this->mapa->hayTestigoEn( nf, nc ) ) {
+                Testigo * t = this->mapa->getTestigoEn( nf, nc );
+                if ( t ) {
+                    this->mapa->removerTestigoEn( nf, nc );
+                    this->colaTestigos.push( t );
+                    cout << " >> Testigo encontrado al llegar! Quedo en la cola." << endl;
+                }
+            }
             break;
         }
     }
@@ -333,7 +354,7 @@ void Juego:: faseAcusacion() {
 
     else if ( this->sospechosos->acusar( acusado ) ) {
         cout << " *** Caso Resuelto! " << acusado
-             << " era el culpable. ***" << endl;
+             << " era el/la culpable. ***" << endl;
         cout << " Puntaje final: " << this->detective->getPuntaje()
              << " movimientos." << endl;
         this->casoResuelto = true;

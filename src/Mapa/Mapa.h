@@ -80,6 +80,9 @@ public:
     void resetVisibilidad(); //Cubre todo con 'o'.
     int eliminarCallejonesAleatorios( int n );
 
+    bool hayPistaEn( int fila, int columna ) const;
+    bool hayTestigoEn( int fila, int columna ) const;
+
     //Display:
     void mostrar( int detFila, int detCol ) const;
 
