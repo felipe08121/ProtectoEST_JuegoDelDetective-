@@ -55,7 +55,7 @@ string RankingJson:: extraerString( const string& linea, const string& clave) co
 
 int RankingJson:: extraerInt( const string& linea, const string& clave ) const {
 
-    string buscar = "\"" + clave + "\":\"";
+    string buscar = "\"" + clave + "\":";
     size_t inicio = linea.find( buscar );
 
     if ( inicio == string:: npos ) {
@@ -134,7 +134,7 @@ void RankingJson:: guardar( const vector<pair<string, int>>& entradas ) const {
 
     //Si no hay entradas el archivo queda vacio (no escribir nada):
     for ( const pair<string, int>& entrada: entradas ) {
-        archivo << "{\"nombre\"" << entrada.first
+        archivo << "{\"nombre\":\"" << entrada.first
                 << "\",\"puntaje\":" << entrada.second << "}" << endl;
     }
     archivo.close();

@@ -9,6 +9,7 @@ Juego:: Juego() {
     this->rng = mt19937( random_device{}() );
     this->jugando = true;
     this->casoResuelto = false;
+    this->casoFinalizado = false;
 }
 
 Juego:: ~Juego() {
@@ -366,8 +367,9 @@ void Juego:: faseAcusacion() {
         this->detective->setPuntaje( this->detective->getPuntaje() * 2 );
         this->casoResuelto = false;
     }
+    this->casoFinalizado = true;
     pausar();
-    //Todo fase 3: guardar puntaje en el BBB historico.
+
 }
 
 
@@ -407,4 +409,30 @@ void Juego:: mostrarBienvenida() {
   |       sospechoso correcto.               |
   +------------------------------------------+
 )";
+}
+
+//Getter para el resultado (Usados por el main para el ABB):
+
+const string& Juego:: getNombreDetective() const {
+    static const string vacio = "Anonimo";
+
+    if ( !this->detective ) {
+        return vacio;
+    }
+    return this->detective->getNombre();
+}
+
+int Juego:: getPuntajeFinal() const {
+    if ( !this->detective ) {
+        return 0;
+    }
+    return this->detective->getPuntaje();
+}
+
+bool Juego:: fueFinalizado() const {
+    return this->casoFinalizado;
+}
+
+bool Juego:: fueResuelto() const {
+    return this->casoResuelto;
 }

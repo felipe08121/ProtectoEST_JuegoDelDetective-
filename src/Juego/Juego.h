@@ -40,7 +40,8 @@ private:
     vector<string> atributosRevelados; // atributos del culpable ya conocidos.
     mt19937 rng;
     bool jugando;
-    bool casoResuelto; //Para fase 3 (ABB).
+    bool casoResuelto;
+    bool casoFinalizado; //Para saber si el jugador finalizo el juego.
 
     //Comandos:
     void mover( char cmd );
@@ -65,6 +66,12 @@ public:
 
     void iniciar();// Configura nombre, mapa, detective,sospechosos.
     void jugar(); //bucle principal.
+
+    //Getter para que main registre el puntaje en el ABB:
+    const string& getNombreDetective() const;
+    int getPuntajeFinal() const;
+    bool fueFinalizado() const;
+    bool fueResuelto() const;
 
 };
 
