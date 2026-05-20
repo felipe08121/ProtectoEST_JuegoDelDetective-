@@ -19,4 +19,8 @@ add_executable(ProyectoEstructuraDatos src/main.cpp
         src/TablaSospechosos/TablaSospechosos.cpp
         src/TablaSospechosos/TablaSospechosos.h
         src/Juego/Juego.cpp
-        src/Juego/Juego.h)
+        src/Juego/Juego.h
+        src/ArbolPuntajes/ArbolPuntajes.cpp
+        src/ArbolPuntajes/ArbolPuntajes.h
+        src/RankingJson/RankingJson.cpp
+        src/RankingJson/RankingJson.h)
