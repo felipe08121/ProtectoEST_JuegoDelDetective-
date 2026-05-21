@@ -86,7 +86,7 @@ void Detective::mostrarPilaPistas() const {
     //El vector es solo para mostrar (display)
 
     stack <Pista*> copia = pilaPistas;
-    vector <Pista*> elems;
+    list <Pista*> elems;
 
     while ( !copia.empty() ) {
         elems.push_back( copia.top() );
@@ -97,7 +97,8 @@ void Detective::mostrarPilaPistas() const {
     cout << " ['#     #']" << endl;
     cout << " ['#     #']" << endl;
 
-    for ( int i = 0; i < (int)elems.size(); i++ ) {
+    int i = 0;
+    for ( Pista * p : elems ) {
         string etiqueta;
         if ( i == 0 ) {
             etiqueta = " <- ultima (usar con X)";
@@ -108,8 +109,9 @@ void Detective::mostrarPilaPistas() const {
         else if ( i == 2 ) {
             etiqueta = " <- antepenultima";
         }
-        cout << " ['#  " << elems[ i ]->getLetra()
+        cout << " ['#  " << p->getLetra()
              << "  #']" << etiqueta << endl;
+        i++;
     }
     // Base de la pila
     cout << " ['# # # #']" << endl;

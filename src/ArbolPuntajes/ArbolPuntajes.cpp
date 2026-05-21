@@ -18,7 +18,7 @@ NodoABB:: NodoABB( const string& nombre, int puntaje ) {
 ArbolPuntajes:: ArbolPuntajes(): rankingJson("../src/RankingJson/ranking.json" ) {
     this-> raiz = nullptr;
     if ( this->rankingJson.existeYNoEstaVacio() ) {
-        vector<pair<string, int>> entradas = this->rankingJson.cargar();
+        list<pair<string, int>> entradas = this->rankingJson.cargar();
 
         for ( const pair<string, int>& e : entradas ) {
             this->raiz = insertar( this-> raiz, e.first, e.second );
@@ -41,7 +41,7 @@ void ArbolPuntajes:: liberarMemoria( NodoABB * nodo ) {
 
 // Recolectar inorden para guardar en archivo:
 
-void ArbolPuntajes:: recolectarInorden( NodoABB * nodo, vector< pair< string, int>>& entradas ) const {
+void ArbolPuntajes:: recolectarInorden( NodoABB * nodo, list< pair< string, int>>& entradas ) const {
     if ( !nodo ) {
         return;
     }
@@ -163,7 +163,7 @@ NodoABB* ArbolPuntajes:: buscarPorNombre( NodoABB * nodo,
 
     NodoABB * encontrado = buscarPorNombre( nodo->izq, nombre );
     if ( encontrado ) {
-        return nodo;
+        return encontrado;
     }
 
     return buscarPorNombre( nodo->der, nombre );
@@ -197,7 +197,7 @@ void ArbolPuntajes:: registrarPuntaje( const string& nombre, int puntaje ) {
     }
 
     //Recolectar inorden y guardar en ranking.json:
-    vector<pair<string, int>> entradas;
+    list<pair<string, int>> entradas;
     recolectarInorden( this->raiz, entradas );
     this->rankingJson.guardar( entradas );
 }

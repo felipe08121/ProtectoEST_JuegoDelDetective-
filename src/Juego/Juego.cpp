@@ -21,7 +21,7 @@ Juego:: ~Juego() {
 
 //Inicializacion:
 
-void Juego:: iniciar() {
+void Juego:: iniciarPartida() {
     limpiarPantalla();
     mostrarBienvenida();
 
@@ -36,16 +36,29 @@ void Juego:: iniciar() {
     cout << endl << " Bienvenido, Detective " << nombre << ". El caso te espera..." << endl;
     pausar();
 
+    //Reseteamos estado para la nueva partida:
+    this->casoResuelto = false;
+    this->casoFinalizado = false;
+    this->atributosRevelados.clear();
+    while ( !this->colaTestigos.empty() ) {
+        this->colaTestigos.pop();
+    }
+
+    delete this->mapa;
+    delete this->detective;
+    delete this->sospechosos;
+
     this->mapa = new Mapa();
     auto[ df , dc ] = this->mapa->posicionInicialDetective();
     this->detective = new Detective( nombre, df ,dc );
     this->sospechosos = new TablaSospechosos();
+    this->jugando = true;
 
 }
 
-//Bucle principal:
+//Antes se llamaba jugar() — ahora es jugarPartida() (privado):
 
-void Juego:: jugar() {
+void Juego:: jugarPartida() {
 
     while ( this->jugando ) {
         limpiarPantalla();
@@ -105,6 +118,100 @@ void Juego:: jugar() {
             this->jugando = false;
         }
     }
+}
+
+//Nuevo -- Punto de entrada con menu principal:
+
+void Juego:: ejecutar() {
+    bool ejecutando = true;
+
+    while ( ejecutando ) {
+        mostrarMenuPrincipal();
+
+        char opcion;
+        cin >> opcion;
+        cin.ignore( numeric_limits<streamsize>::max(),'\n' );
+
+        switch ( opcion ) {
+
+            case '1': {
+                iniciarPartida();
+                jugarPartida();
+
+                //Guardar puntaje si el caso fue finalizado:
+                if ( fueFinalizado() ) {
+                    this->ranking.registrarPuntaje( getNombreDetective(), getPuntajeFinal() );
+                }
+                else {
+                    cout << endl << " Partida abandonada -- Puntaje no registrado." << endl;
+                }
+                pausar();
+                break;
+            }
+
+            case '2': {
+                opcionBuscarDetective();
+                break;
+            }
+
+            case '3' : {
+                opcionVerRanking();
+                break;
+            }
+
+            case '4': {
+                ejecutando = false;
+                cout << endl << " Hasta la proxima!" << endl;
+                break;
+            }
+            default: {
+                cout << endl <<  " Opcion no valida." << endl;
+                pausar();
+            }
+        }
+    }
+}
+
+//Menu principal:
+
+void Juego:: mostrarMenuPrincipal() {
+    limpiarPantalla();
+    cout << R"(
+  +------------------------------------------+
+  |        EL CASO DEL DETECTIVE             |
+  |                                          |
+  |   1. Nueva partida                       |
+  |   2. Buscar detective (puntaje)          |
+  |   3. Ver ranking historico               |
+  |   4. Salir                               |
+  +------------------------------------------+
+)" << endl;
+    cout << " Opcion -> ";
+}
+
+void Juego:: opcionBuscarDetective() {
+    limpiarPantalla();
+    cout << endl <<  " === BUSCAR DETECTIVE ===" << endl;
+    cout << " Nombre del detective: ";
+    string nombre;
+    getline( cin, nombre );
+
+    int puntaje;
+
+    if ( this->ranking.buscarDetective( nombre, puntaje ) ) {
+        cout << endl << " " << nombre << " ha jugado antes."
+             << " Mejor puntaje: " << puntaje << " movimientos." << endl;
+    }
+    else {
+        cout << endl << " " << nombre << " no tiene puntaje registrado." << endl;
+    }
+    pausar();
+}
+
+void Juego:: opcionVerRanking() {
+    limpiarPantalla();
+    this->ranking.mostrarRanking();
+    pausar();
 }
 
 //Comando: Mover (W/A/S/D):
@@ -287,11 +394,11 @@ void Juego:: interrogarTestigo() {
 void Juego:: revelarAtributoDelCulpable( const string& origen ) {
 
     Sospechoso * culp = this->sospechosos->getCulpable();
-    const vector <string>& todos = culp->getAtributos();
+    const list <string>& todos = culp->getAtributos();
 
     //Buscar atributos del culpable que no se han revelado aun.
 
-    vector<string> noRevelados;
+    list<string> noRevelados;
     for ( const string& attr : todos ) {
         if ( find( this->atributosRevelados.begin(),
                    this->atributosRevelados.end(), attr ) == this->atributosRevelados.end() ) {
@@ -304,12 +411,14 @@ void Juego:: revelarAtributoDelCulpable( const string& origen ) {
         return;
     }
 
-    //Escoger uno al azar:
+    //Escoger uno al azar de la lista:
 
     uniform_int_distribution<int> dist( 0, noRevelados.size() - 1 );
-    string nuevo = noRevelados[ dist( this->rng ) ];
-    this->atributosRevelados.push_back( nuevo );
+    auto it = noRevelados.begin();
+    advance( it, dist( this->rng) ); // <-- Advance en vez de [].
+    string nuevo = *it;
 
+    this->atributosRevelados.push_back( nuevo );
     cout << " -> Atributo del culpable revelado (" << origen << "): "
          << nuevo << endl;
 }
@@ -330,9 +439,14 @@ void Juego:: faseAcusacion() {
                                 this->detective->getNombre() );
 
     cout << endl << " Atributos del culpable revelados: ";
-    for ( int i = 0; i < (int)this->atributosRevelados.size(); i++ ) {
-        cout << this->atributosRevelados[ i ];
-        if ( i < (int)this->atributosRevelados.size() - 1 ) cout << ", ";
+    bool primero = true;
+
+    for ( const string& a : this->atributosRevelados ) {
+        if ( !primero ) {
+            cout << ", ";
+        }
+        cout << a;
+        primero = false;
     }
 
     cout << endl;

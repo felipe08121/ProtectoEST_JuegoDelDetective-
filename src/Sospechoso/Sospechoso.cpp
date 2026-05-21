@@ -1,7 +1,7 @@
 
 #include "Sospechoso.h"
 
-Sospechoso :: Sospechoso( const string& nombre, const vector <string>& atributos ) {
+Sospechoso :: Sospechoso( const string& nombre, const list <string>& atributos ) {
     this->nombre = nombre;
     this->atributos = atributos;
 }
@@ -12,7 +12,7 @@ const string& Sospechoso:: getNombre() const {
     return this->nombre;
 }
 
-const vector<string>& Sospechoso:: getAtributos() const {
+const list<string>& Sospechoso:: getAtributos() const {
     return this->atributos;
 }
 

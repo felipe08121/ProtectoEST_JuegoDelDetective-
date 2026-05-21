@@ -7,13 +7,14 @@
 
 #include <iostream>
 #include <string>
-#include <vector>
 #include <utility>
+#include <list>
 #include "../RankingJson/RankingJson.h"
 
 using std:: string;
 using std:: cout;
 using std:: endl;
+using std:: list;
 
 
 //Nodo del ABB -- cada nodo guarda un detective y su mejor puntaje.
@@ -51,7 +52,7 @@ private:
     void inorden ( NodoABB* nodo, int& posicion ) const;
     void liberarMemoria( NodoABB* nodo );
     void recolectarInorden( NodoABB * nodo,
-                            vector<pair<string, int>>& entradas ) const;
+                            list<pair<string, int>>& entradas ) const;
 
 public:
 

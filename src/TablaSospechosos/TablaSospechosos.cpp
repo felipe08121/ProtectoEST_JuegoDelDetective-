@@ -1,13 +1,15 @@
 #include "TablaSospechosos.h"
 
-//Constructor
+//Constructor:
+
 TablaSospechosos:: TablaSospechosos() {
     this-> culpable = nullptr;
     this-> rng = mt19937( random_device{}() );
     generarSospechosos();
 }
 
-//Destructor
+//Destructor:
+
 TablaSospechosos:: ~TablaSospechosos() {
     for ( auto& par : this->tabla) {
         delete par.second;
@@ -20,7 +22,7 @@ TablaSospechosos:: ~TablaSospechosos() {
 void TablaSospechosos:: generarSospechosos() {
     //Lista predefinida de nombre con su sexo:
 
-    vector< pair<string,string> > nombresCandidatos = {
+    list< pair<string,string> > candidatos = {
         { "Carlos",   "hombre" },  { "Diana",    "mujer" },
         { "Eduardo",  "hombre" },  { "Fernanda", "mujer" },
         { "Gonzalo",  "hombre" },  { "Hilda",    "mujer" },
@@ -32,37 +34,49 @@ void TablaSospechosos:: generarSospechosos() {
 
     //Pool de atributos (uno por categoria para cada sospechoso):
 
-    vector<string> estaturas = { "alto", "bajo", "mediano"};
-    vector<string> cabellos = { "cabello rubio", "cabello moreno",
+    list<string> estaturas = { "alto", "bajo", "mediano"};
+    list<string> cabellos = { "cabello rubio", "cabello moreno",
                               "cabello pelirrojo", "cabello canoso" };
-    vector<string> pieles = { "piel blanca", "piel triguena", "piel oscura"};
-    vector<string> lateralidad = {"zurdo", "diestro"};
+    list<string> pieles = { "piel blanca", "piel triguena", "piel oscura"};
+    list<string> lateralidad = {"zurdo", "diestro"};
 
-    //Mezclar nombres y escoger los primeros 8:
-    shuffle( nombresCandidatos.begin(), nombresCandidatos.end(), this->rng );
+    //Funcion Auxiliar para eligir elemento aleatorio de una lista:
 
-    for ( int i = 0; i < NUM_SOSPECHOSOS; i++ ) {
-        string nom = nombresCandidatos[ i ].first;
-        string sexo = nombresCandidatos[ i ].second;
+    auto aleatorio = [&] ( const list<string>& lista ) -> string {
+        uniform_int_distribution<int> d( 0, (int) lista.size() - 1 );
+        auto it = lista.begin();
+        advance( it, d( this->rng ) );
+        return *it;
+    };
 
-        //Cada Sospecho recibe 5 atributos: sexo + uno por categoria:
-        vector<string> attrs;
+    //Escoger 8 candidatos al azar ( sin repetir) :
+
+    while ( (int) this->tabla.size() < NUM_SOSPECHOSOS && !candidatos.empty() ){
+        uniform_int_distribution<int> d( 0, (int) candidatos.size() -1 );
+        auto it = candidatos.begin();
+        advance( it, d( this->rng ) );
+
+        string nom = it->first;
+        string sexo = it->second;
+        candidatos.erase( it ); //Quitar para no repetir.
+
+        list<string> attrs;
         attrs.push_back( sexo );
-        attrs.push_back( estaturas[ uniform_int_distribution<int>(0, estaturas.size() -1 )(this->rng) ] );
-        attrs.push_back( cabellos[ uniform_int_distribution<int>(0, cabellos.size() -1 )(this->rng) ] );
-        attrs.push_back( pieles[ uniform_int_distribution<int>(0, pieles.size() -1 )(this->rng) ] );
-        attrs.push_back( lateralidad[ uniform_int_distribution<int>(0, lateralidad.size() -1 )(this->rng) ] );
+        attrs.push_back( aleatorio (estaturas) );
+        attrs.push_back( aleatorio (cabellos) );
+        attrs.push_back( aleatorio (pieles) );
+        attrs.push_back( aleatorio (lateralidad) );
 
-        Sospechoso * s = new Sospechoso( nom, attrs );
-        this->tabla[ nom ] = s; // Insertar en tabla Hash.
+        Sospechoso * s = new Sospechoso ( nom, attrs );
+        this->tabla[ nom ] = s;
     }
 
     //Escoger culpable al azar entre los 8 ingresados:
     uniform_int_distribution<int> distCulp( 0, NUM_SOSPECHOSOS - 1 );
-    int idxCulp = distCulp( this-> rng );
+    int idx = distCulp( this-> rng );
     int actual = 0;
     for ( auto& par : this->tabla ) {
-        if ( actual == idxCulp ) {
+        if ( actual == idx ) {
             this->culpable = par.second;
             break;
         }
@@ -70,7 +84,8 @@ void TablaSospechosos:: generarSospechosos() {
     }
 }
 
-//Busqueda O(1) promedio
+//Busqueda O(1) promedio.
+
 Sospechoso * TablaSospechosos:: buscar( const string& nombre ) const {
     auto it = this->tabla.find( nombre ); //unordered_map::find es O(1) promedio.
     if ( it == this->tabla.end() ) {
@@ -84,7 +99,7 @@ bool TablaSospechosos:: acusar( const string& nombre ) const {
     if ( !s ) {
         return false;
     }
-    return s == this->culpable; //comparacion de punteros mismo objeto
+    return s == this->culpable; //comparacion de punteros -- mismo objeto.
 }
 
 Sospechoso * TablaSospechosos :: getCulpable() const {
@@ -95,10 +110,10 @@ const unordered_map<string, Sospechoso*>& TablaSospechosos:: getTabla() const {
     return this-> tabla;
 }
 
-//muestra cada sospechoso con sus atributos que coinciden con los
+//Display -- muestra cada sospechoso con sus atributos que coinciden con los
 //revelados del culpable:
 
-void TablaSospechosos :: mostrar ( const vector<string>& atributosRevelados, const string& nombreDetective ) const {
+void TablaSospechosos :: mostrar ( const list<string>& atributosRevelados, const string& nombreDetective ) const {
     cout << endl << " " << nombreDetective << ", sospechosos del caso (atributos del culpable revelados hasta ahora):"
          << endl;
 
@@ -119,7 +134,7 @@ void TablaSospechosos :: mostrar ( const vector<string>& atributosRevelados, con
         }
 
         if ( primero ) {
-            cout << "--"; //ninguno de los revelados coincide con este sospechoso.
+            cout << "--"; //Ninguno de los revelados coincide con este sospechoso.
         }
         cout << endl;
     }

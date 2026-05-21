@@ -4,6 +4,7 @@
 
 #ifndef PROTECTOEST_JUEGODELDETECTIVE__PISTA_H
 #define PROTECTOEST_JUEGODELDETECTIVE__PISTA_H
+
 #include <string>
 
 using std::string;
@@ -14,9 +15,7 @@ enum class TipoPista {
     TESTIMONIO, // T - puntaje a 0 o 2X (aleatorio).
     PRUEBA_FORENSE // P - Teletransporta al detective.
 };
-
 class Pista {
-
 private:
     TipoPista tipo;
     int fila;
@@ -38,7 +37,5 @@ public:
     string getTipoStr() const; //Para obtener el nombre completo.
     char getLetra() const; // H/C/T/P
 };
-
-
 
 #endif //PROTECTOEST_JUEGODELDETECTIVE__PISTA_H

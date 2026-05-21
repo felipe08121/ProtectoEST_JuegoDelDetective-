@@ -82,8 +82,8 @@ int RankingJson:: extraerInt( const string& linea, const string& clave ) const {
 
 //Cargar - lee el archivo y devuelve las entradas:
 
-vector < pair< string, int> > RankingJson:: cargar() const {
-    vector <pair<string,int>> entradas;
+list < pair< string, int> > RankingJson:: cargar() const {
+    list <pair<string,int>> entradas;
 
     if ( !existeYNoEstaVacio() ) {
         return entradas; //Archivo inexistente o vacio -- devolver vacio.
@@ -124,7 +124,7 @@ vector < pair< string, int> > RankingJson:: cargar() const {
 
 //Guardar -- Sobreescribe el archivo con las entradas:
 
-void RankingJson:: guardar( const vector<pair<string, int>>& entradas ) const {
+void RankingJson:: guardar( const list<pair<string, int>>& entradas ) const {
     ofstream archivo( this->rutaArchivo );
 
     if ( !archivo.is_open() ) {

@@ -4,7 +4,6 @@
 #include <list>
 #include <random>
 #include <utility>
-#include <vector>
 #include <algorithm>
 #include <cctype>
 #include <iostream>
@@ -17,11 +16,10 @@ using std:: endl;
 using std:: list;
 using std:: pair;
 using std::uniform_int_distribution;
-using std:: vector;
 using std:: mt19937;
 using std:: random_device;
-using std:: shuffle;
 using std:: min;
+using std:: advance;
 
 
 class Mapa {

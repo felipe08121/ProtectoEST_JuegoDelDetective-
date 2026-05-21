@@ -3,19 +3,20 @@
 
 #include <string>
 #include <queue> // TAD Cola - declaraciones de testigos.
-#include <vector>
 #include <random>
 #include <iostream>
 #include <limits>
 #include <cctype>
 #include <algorithm>
+#include <list>
 #include "../Detective/Detective.h"
 #include "../Mapa/Mapa.h"
 #include "../TablaSospechosos/TablaSospechosos.h"
+#include "../ArbolPuntajes/ArbolPuntajes.h"
 
+using std::list;
 using std:: string;
 using std:: queue;
-using std:: vector;
 using std:: mt19937;
 using std:: cout;
 using std:: endl;
@@ -36,12 +37,17 @@ private:
     Detective * detective;
     Mapa * mapa;
     TablaSospechosos* sospechosos;
+    ArbolPuntajes ranking; // Perisiste entre partidas.
     queue<Testigo*> colaTestigos; //TAD Cola
-    vector<string> atributosRevelados; // atributos del culpable ya conocidos.
+    list<string> atributosRevelados; // atributos del culpable ya conocidos.
     mt19937 rng;
     bool jugando;
     bool casoResuelto;
     bool casoFinalizado; //Para saber si el jugador finalizo el juego.
+
+    //Logica de una partida:
+    void iniciarPartida();// <- Antes se llamada iniciar().
+    void jugarPartida(); // <- Antes se llamada jugar().
 
     //Comandos:
     void mover( char cmd );
@@ -53,6 +59,11 @@ private:
     //Auxiliar:
     void revelarAtributoDelCulpable( const string& origen );
 
+    //UI del menu principal:
+    void mostrarMenuPrincipal();
+    void opcionBuscarDetective();
+    void opcionVerRanking();
+
     //UI:
     void limpiarPantalla();
     void pausar();
@@ -60,18 +71,19 @@ private:
     void mostrarComandos();
     void mostrarBienvenida();
 
-public:
-    Juego();
-    ~Juego();
-
-    void iniciar();// Configura nombre, mapa, detective,sospechosos.
-    void jugar(); //bucle principal.
-
     //Getter para que main registre el puntaje en el ABB:
     const string& getNombreDetective() const;
     int getPuntajeFinal() const;
     bool fueFinalizado() const;
     bool fueResuelto() const;
+
+public:
+    Juego();
+    ~Juego();
+
+    //Punto de entrada principal -- contiene el menu y el loop de partidas:
+    void ejecutar();
+
 
 };
 

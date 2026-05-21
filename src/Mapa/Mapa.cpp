@@ -7,43 +7,49 @@ Mapa:: Mapa() {
     this->cabeza = nullptr;
     this->rng = mt19937( random_device{}() );
 
-    //Paso 1: Crear Nodos con vector temporal SOLO para el enlazada inicial.
-    //Una vez enlazados, el vector se descarta; el gameplay usa solo la lista.
+    //Construimos la lista fila por fila.
+    //nodoAnteriorFila apunta al primer nodo de la fila recien contruida.
+    //y los usamos para enlazar los nodos arriba/abajo de la siguiente fila.
 
-    vector< vector <Ubicacion*>> temp( TOTAL_FILAS, vector<Ubicacion*>(TOTAL_COLUMNAS, nullptr));
+    Ubicacion * nodoAnteriorFila = nullptr;
 
     for ( int i = 0; i < TOTAL_FILAS; i++ ) {
+        Ubicacion * primerNodoActual = nullptr; //Primer nodo de la fila actual.
+        Ubicacion * nodoIzq = nullptr; //Nodo anterior en la misma fila.
+        Ubicacion * nodoArriba = nodoAnteriorFila; // Recorre la fila anterior para enlace (arriba/abajo).
+
         for ( int j = 0; j < TOTAL_COLUMNAS; j++ ) {
-            bool esBorde = ( i == 0 || i == TOTAL_FILAS - 1  ||
-                             j == 0 || j == TOTAL_COLUMNAS -1 );
-            TipoUbicacion t = esBorde ? TipoUbicacion::EDIFICIO
-                                      : TipoUbicacion::CALLE;
-            temp[ i ][ j ] = new Ubicacion( i, j, t );
+            bool esBorde = ( i == 0 || i == TOTAL_FILAS - 1 ||
+                             j == 0 || j == TOTAL_COLUMNAS - 1 );
+            TipoUbicacion t = esBorde ? TipoUbicacion :: EDIFICIO : TipoUbicacion::CALLE;
+
+            Ubicacion * nuevo = new Ubicacion( i, j, t );
+
+            //Enlace horizontal (izquierda <--> derecha):
+            if ( nodoIzq ) {
+                nodoIzq->setDerecha( nuevo );
+                nuevo->setIzquierda( nodoIzq );
+            }
+
+            //Enlace vertical ( Arriba / Abajo):
+            if ( nodoArriba ) {
+                nodoArriba -> setAbajo( nuevo );
+                nuevo->setArriba( nodoArriba );
+                nodoArriba = nodoArriba->getDerecha(); // avanzar en la fila anterior.
+            }
+
+            if ( j == 0) {
+                primerNodoActual = nuevo;
+            }
+            nodoIzq = nuevo;
         }
-    }
 
-    //Paso 2: Enlazar la lista multiplemente enlazada:
-    for (int i = 0; i < TOTAL_FILAS; i++ ) {
-        for ( int j = 0; j < TOTAL_COLUMNAS; j++ ) {
-            if ( i > 0 ) {
-                temp[ i ][ j ]->setArriba( temp[ i-1 ][ j ] );
-            }
-            if ( i < TOTAL_FILAS - 1 ) {
-                temp[ i ][ j ]->setAbajo( temp[ i + 1 ][ j ] );
-            }
-            if ( j > 0 ) {
-                temp[ i ][ j ] -> setIzquierda( temp[ i ][ j-1 ]);
-            }
-
-            if ( j < TOTAL_COLUMNAS - 1 ) {
-                temp[ i ][ j ]->setDerecha( temp[ i ][ j+1 ] );
-            }
+        if ( i == 0) {
+            this->cabeza = primerNodoActual;
         }
-    }
-    this->cabeza = temp[ 0 ][ 0 ];
-    //temp sale de alcance aqui - desde ahora solo existe la lista enladada.
 
-    //Paso 3: Colocar elementos aleatorios:
+        nodoAnteriorFila= primerNodoActual;// Para la siguiente fila
+    }
 
     colocarCallejones();
     colocarPistas();
@@ -84,6 +90,7 @@ Ubicacion * Mapa:: getNodo( int fila, int columna ) const {
     if ( fila < 0 || fila >= TOTAL_FILAS || columna < 0 || columna >= TOTAL_COLUMNAS ) {
         return nullptr;
     }
+
     Ubicacion * n = this->cabeza;
     for ( int i =0; i < fila; i++ ) {
         n = n ->getAbajo();
@@ -102,7 +109,7 @@ void Mapa:: colocarCallejones() {
     int colocados = 0;
 
     while ( colocados < NUM_CALLEJONES ) {
-        int f = dist( this->rng ), c = dist( rng );
+        int f = dist( this->rng ), c = dist( this->rng );
         Ubicacion* n = getNodo( f,c );
         if ( n && n->getTipo() == TipoUbicacion::CALLE && !n->getTienePista() && !n->getTieneTestigo() ) {
             n->setTipo( TipoUbicacion::CALLEJON );
@@ -113,21 +120,29 @@ void Mapa:: colocarCallejones() {
 
 void Mapa:: colocarPistas() {
     uniform_int_distribution< int > dist( INTERIOR_MIN, INTERIOR_MAX );
-    uniform_int_distribution< int > tipoDist( 0, 3 );
 
-    const TipoPista tipos[ 4 ] = {
+
+    list <TipoPista> tipos = {
         TipoPista:: HUELLA , TipoPista::COARTADA,
         TipoPista:: TESTIMONIO, TipoPista:: PRUEBA_FORENSE
     };
+
+    //Distribucion para elegir tipo aleatorio: (0 a 3 por cada tipo de TipoPista):
+    uniform_int_distribution<int> tipoDist( 0, (int) tipos.size() - 1 );
 
     int colocadas = 0;
 
     while ( colocadas < NUM_PISTAS ) {
         int f = dist( this->rng ), c = dist( this->rng );
-        Ubicacion * n = getNodo( f, c );
+        Ubicacion * n = getNodo( f,c );
         if ( n && n->getTipo() == TipoUbicacion::CALLE
-               && !n->getTienePista() && !n-> getTieneTestigo() ) {
-            this->pistas.push_back( new Pista( tipos[tipoDist( this-> rng )], f, c ));
+               && !n->getTienePista() && !n->getTieneTestigo() )
+        {
+            //Elegir tipo aleatorio con advance:
+            auto it = tipos.begin();
+            advance( it, tipoDist( this->rng ) );
+
+            this->pistas.push_back( new Pista( *it, f, c ) );
             n->setTienePista( true );
             colocadas++;
         }
@@ -281,7 +296,7 @@ void Mapa:: resetVisibilidad() {
 
 int Mapa::eliminarCallejonesAleatorios( int cantidad ) {
     //Recolectar callejones con transversal de la lista (vector locar para shuffle).
-    vector <Ubicacion*> callejones;
+    list <Ubicacion*> callejones;
     Ubicacion * filaPtr = this-> cabeza;
     while ( filaPtr ) {
         Ubicacion * n = filaPtr;
@@ -297,12 +312,21 @@ int Mapa::eliminarCallejonesAleatorios( int cantidad ) {
         return 0;
     }
 
-    shuffle( callejones.begin(), callejones.end(), this-> rng );
-    int eliminados = min ( cantidad, (int) callejones.size() );
-    for ( int i = 0; i < eliminados; i++ ) {
-        callejones[ i ]->setTipo( TipoUbicacion::CALLE );
-        callejones[ i ]->setDescubierto( false );
+    int eliminados = 0;
+    int aEliminar = min( cantidad, (int) callejones.size() );
+
+    for ( int i = 0; i < aEliminar; i++ ) {
+        //Escoger un callejon al azar de la lista:
+        uniform_int_distribution<int> d( 0, (int) callejones.size() - 1 );
+        auto it = callejones.begin();
+        advance( it, d( this->rng ) ); //Avanzar al indice aleatorio.
+
+        (*it)->setTipo( TipoUbicacion::CALLE );
+        (*it)->setDescubierto( false );
+        callejones.erase( it ); //Quitarlo para no eligirlo dos veces.
+        eliminados++;
     }
+
     return eliminados;
 }
 

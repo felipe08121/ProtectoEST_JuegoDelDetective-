@@ -3,15 +3,15 @@
 
 #include <string>
 #include <stack> // TAD Pila - para las pistas recolectadas.
-#include <vector> //Solo para el display de la pila, no jugabilidad.
 #include <iostream>
+#include <list>
 #include "../Pista/Pista.h"
 
 using std::string;
 using std:: stack;
 using std:: cout;
 using std:: endl;
-using std:: vector;
+using std:: list;
 
 class Detective {
 

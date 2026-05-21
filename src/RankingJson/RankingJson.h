@@ -6,13 +6,12 @@
 #define PROYECTOESTRUCTURADATOS_RANKINGJSON_H
 
 #include <string>
-#include <vector>
 #include <utility> // Para pair.
 #include <fstream>
 #include <iostream>
+#include <list>
 
 using std:: string;
-using std:: vector;
 using std:: pair;
 using std:: ifstream;
 using std:: ofstream;
@@ -20,12 +19,10 @@ using std:: cout;
 using std:: endl;
 using std:: getline;
 using std:: stoi;
+using std:: list;
 
 // Clase responsable de leer y escribir ranking.json
 // Una entrada por linea, sin conrchetes ni comas entre objetos.
-
-
-
 
 class RankingJson {
 
@@ -45,12 +42,11 @@ public:
     bool existeYNoEstaVacio() const;
 
     //lee el archivo y devuelve todas las entradas.
-    vector< pair <string, int> > cargar() const;
+    list< pair <string, int> > cargar() const;
 
     //Sobreescribe el archivo con todas las entradas recibidas.
-    void guardar( const vector< pair<string, int> >& entradas ) const;
+    void guardar( const list< pair<string, int> >& entradas ) const;
 
 };
-
 
 #endif //PROYECTOESTRUCTURADATOS_RANKINGJSON_H
