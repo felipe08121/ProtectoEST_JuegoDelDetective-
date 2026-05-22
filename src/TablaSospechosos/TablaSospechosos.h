@@ -49,7 +49,7 @@ public:
     const unordered_map<string, Sospechoso*>& getTabla() const;
 
     //Muestra la tabla con los atributos del culpable revelados hasta ahora.:
-    void mostrar( const list<string>& stributosRevelados, const string& nombreDetectives ) const;
+    void mostrar( const list<string>& atributosRevelados, const string& nombreDetectives ) const;
 
 
 

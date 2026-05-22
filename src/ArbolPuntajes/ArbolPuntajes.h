@@ -15,6 +15,7 @@ using std:: string;
 using std:: cout;
 using std:: endl;
 using std:: list;
+using std:: pair;
 
 
 //Nodo del ABB -- cada nodo guarda un detective y su mejor puntaje.
